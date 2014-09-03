@@ -2,13 +2,108 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <title>C.H.I.droid controller</title>
     <style type="text/css">
- 
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+      }
+      span.button {
+        cursor:pointer;  
+        background-color:silver;
+        border:1px solid black;
+        border-radius:4px;
+        padding:6px;
+      }
+      div#log_console {
+        background-color:#f0f0f0;
+        padding:6px;
+        border:1px solid black;
+        border-radius:4px;
+      }
     </style>
-    <script src="scripts.js"></script>
+    <script language="javascript">
+      function init() {
+        document.body.addEventListener('click',registrar,false);
+      }
+      //
+      function registrar(e) {
+        ref = e.target;
+        if (ref.classList.contains('control')) {
+          buttonController(ref);
+        }
+      }
+      //
+      function buttonController(ref) {
+        var commandCode = ref.getAttribute('data-cdc-cc');
+        switch (commandCode) {
+          case '^':
+          case 'v':
+          case '<':
+          case '>':
+          case ';':
+          case ':':
+          case '!':
+          case 'open_port':
+          case 'open_port':
+            log(commandCode);
+            log(toDevice(commandCode));
+          break;
+          case 'clear_log':
+            clearLog();
+            break;
+          default:
+            console.log('unknown command code:' + commandCode);
+          break;
+        }
+        console.log('--' + ref.getAttribute('data-cdc-cc'));
+        
+      }
+      //
+      function log(data) {
+        document.getElementById('log_console').innerText += data + '\n';
+      }
+      //
+      function clearLog() {
+        document.getElementById('log_console').innerText = '';
+      }
+      //
+      function syncAjax(url,data) {
+        var ajax = new XMLHttpRequest(); 
+        try {
+            ajax.open("POST", url, false);
+            ajax.setRequestHeader("Content-type", "text/plain");
+            ajax.send(data);
+        } catch (e) {console.log('exception:' + e);}
+        return ajax.responseText;                
+      }   
+      //
+      function toDevice(data) {
+          return response = syncAjax('/', data);
+      }      
+      //
+      function test() {
+        alert('ok');
+        console.log('and ok');
+      }
+    </script>
   </head>
-<body>
-
+<body onload="init()">
+  <h1>C.H.I.droid controller</h1>
+  <hr />
+  <span class="button control" data-cdc-cc="open_port">open</span>
+  <span class="button control" data-cdc-cc="close_port">close</span>
+  <hr />
+  <span class="button control" data-cdc-cc="^">up</span>
+  <span class="button control" data-cdc-cc="v">dn</span>
+  <span class="button control" data-cdc-cc="<">left</span>
+  <span class="button control" data-cdc-cc=">">right</span>
+  <span class="button control" data-cdc-cc=";">in</span>
+  <span class="button control" data-cdc-cc=":">out</span>
+  <span class="button control" data-cdc-cc="!">STOP</span>
+  <p />
+  <div id="log_console"></div>
+  <p />
+  <span class="button control" data-cdc-cc="clear_log">clear</span>
 </body>
 </html>
