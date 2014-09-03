@@ -1,7 +1,7 @@
 chidroid
 ========
 
-C.H.I.Droid
+C.H.I.Droid related
 
 limitFlags
 motorFlags
