@@ -135,12 +135,12 @@ java facedetection
 http://cell0907.blogspot.com/2013/07/detecting-faces-in-your-webcam-stream.html
 
 java serial port
-http://www.lucid-control.com/how-to-access-serial-ports-in-java/
-http://playground.arduino.cc/interfacing/java
-
-
 
 JSSC:
  downloaded https://java-simple-serial-connector.googlecode.com/files/jSSC-2.6.0-Release.zip
  extracted jssc.jar from there
  https://code.google.com/p/java-simple-serial-connector/wiki/jSSC_examples
+ 
+ RXTX:
+ http://playground.arduino.cc/interfacing/java
+ http://www.jcontrol.org/download/readme_rxtx_en.html
