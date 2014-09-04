@@ -29,22 +29,19 @@ public class Scratch1 {
     public static SerialPort serialPort;
     
     public void jssctest() {
-    	serialPort = new SerialPort("COM1");
+    	serialPort = new SerialPort("COM1"); //new SerialPort("/dev/ttyACM0");
+            //System.out.println("Port closed: " + serialPort.closePort());    	
         try {
-            //Открываем порт
             serialPort.openPort();
-            //Выставляем параметры
             serialPort.setParams(SerialPort.BAUDRATE_9600,
                                  SerialPort.DATABITS_8,
                                  SerialPort.STOPBITS_1,
                                  SerialPort.PARITY_NONE);
-            //Включаем аппаратное управление потоком
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | 
                                           SerialPort.FLOWCONTROL_RTSCTS_OUT);
-            //Устанавливаем ивент лисенер и маску
             serialPort.addEventListener(new PortReader(), SerialPort.MASK_RXCHAR);
-            //Отправляем запрос устройству
             serialPort.writeString("Get data");
+            //System.out.println("\"Hello World!!!\" successfully writen to port: " + serialPort.writeBytes("Hello World!!!".getBytes()));
         }
         catch (Exception ex) {
             System.out.println(ex);
@@ -56,9 +53,7 @@ public class Scratch1 {
         public void serialEvent(SerialPortEvent event) {
             if(event.isRXCHAR() &&event.getEventValue() > 0){
                 try {
-                    //Получаем ответ от устройства, обрабатываем данные и т.д.
                     String data = serialPort.readString(event.getEventValue());
-                    //И снова отправляем запрос
                     serialPort.writeString("Get data");
                 }
                 catch (Exception ex) {
