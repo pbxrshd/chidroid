@@ -14,13 +14,19 @@
         border:1px solid black;
         border-radius:4px;
         padding:6px;
+        margin:4px;
       }
+
       div#log_console {
         background-color:#f0f0f0;
         padding:6px;
-        border:1px solid black;
+        border:1px solid silver;
         border-radius:4px;
       }
+      div#log_console > div {
+          font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+      }
+      
     </style>
     <script language="javascript">
       function init() {
@@ -39,15 +45,36 @@
         switch (commandCode) {
           case '^':
           case 'v':
+            var dataValue = document.getElementById('ud_pwm').value;
+            var response = toDevice(dataValue + commandCode);
+            log('<-' + commandCode + ' ' + asBinary(response));          
+            break;
           case '<':
           case '>':
+            var dataValue = document.getElementById('lr_pwm').value;
+            var response = toDevice(dataValue + commandCode);
+            log('<-' + commandCode + ' ' + asBinary(response));          
+            break;
+            break;
           case ';':
           case ':':
+            var dataValue = document.getElementById('io_pwm').value;
+            var response = toDevice(dataValue + commandCode);
+            log('<-' + commandCode + ' ' + asBinary(response));          
+            break;
+            break;
           case '!':
-          case 'open_port':
-          case 'open_port':
-            log(commandCode);
-            log(toDevice(commandCode));
+            var response = toDevice(commandCode);
+            log('<-' + commandCode + ' ' + asBinary(response));
+            break;
+          case '?':
+            var response = toDevice(commandCode);
+            log('flags: ' + asBinary(response));
+            break;            
+          case 'o':
+          case 'c':
+            var response = toDevice(commandCode);
+            log(response);
           break;
           case 'clear_log':
             clearLog();
@@ -61,11 +88,19 @@
       }
       //
       function log(data) {
-        document.getElementById('log_console').innerText += data + '\n';
-      }
+        var logger = document.getElementById('log_console');
+        var mesgs = logger.getElementsByTagName('div');
+        var entry = logger.removeChild(mesgs[mesgs.length-1]);
+        entry.innerText = data;
+        logger.insertBefore(entry, mesgs[0]);
+      }      
       //
       function clearLog() {
-        document.getElementById('log_console').innerText = '';
+        var logger = document.getElementById('log_console');
+        var mesgs = logger.getElementsByTagName('div');
+        for (var i = 0; i < mesgs.length; i++) {
+            mesgs[i].innerText = '';
+        }
       }
       //
       function syncAjax(url,data) {
@@ -82,6 +117,12 @@
           return response = syncAjax('/', data);
       }      
       //
+      function asBinary(d) {
+        var pad = '00000000';
+        var s = (d >>> 0).toString(2);
+        return (pad.substr(0, pad.length - s.length) + s);
+      }      
+      //
       function test() {
         alert('ok');
         console.log('and ok');
@@ -90,19 +131,39 @@
   </head>
 <body onload="init()">
   <h1>C.H.I.droid controller</h1>
+  
+  
   <hr />
-  <span class="button control" data-cdc-cc="open_port">open</span>
-  <span class="button control" data-cdc-cc="close_port">close</span>
+  
+  <span class="button control" data-cdc-cc="o">open</span>
+  <span class="button control" data-cdc-cc="c">close</span>
   <hr />
-  <span class="button control" data-cdc-cc="^">up</span>
-  <span class="button control" data-cdc-cc="v">dn</span>
-  <span class="button control" data-cdc-cc="<">left</span>
-  <span class="button control" data-cdc-cc=">">right</span>
-  <span class="button control" data-cdc-cc=";">in</span>
-  <span class="button control" data-cdc-cc=":">out</span>
+  <div>
+      <input type="text" size="5" id="ud_pwm" />
+      <span class="button control" data-cdc-cc="^">up</span>
+      <span class="button control" data-cdc-cc="v">dn</span>
+  </div>
+  <div>
+      <input type="text" size="5" id="lr_pwm" />
+      <span class="button control" data-cdc-cc="<">left</span>
+      <span class="button control" data-cdc-cc=">">right</span>
+  </div>
+  <div>
+      <input type="text" size="5" id="io_pwm" />  
+      <span class="button control" data-cdc-cc=";">in</span>
+      <span class="button control" data-cdc-cc=":">out</span>
+  </div>
   <span class="button control" data-cdc-cc="!">STOP</span>
+  <span class="button control" data-cdc-cc="?">status</span>
   <p />
-  <div id="log_console"></div>
+  <div id="log_console">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
   <p />
   <span class="button control" data-cdc-cc="clear_log">clear</span>
 </body>

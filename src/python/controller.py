@@ -5,6 +5,7 @@ import SimpleHTTPServer
 import serial
 
 HTTP_PORT = 56789
+#SERIAL_PORT = '/dev/ttyACM0'
 SERIAL_PORT = '/dev/ttyUSB0'
 
 SERIAL_REF = None
