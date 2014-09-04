@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
 import jssc.SerialPortList;
 
 public class Scratch1 {
@@ -23,7 +26,49 @@ public class Scratch1 {
             System.out.println(portNames[i]);
         }
     }
+    public static SerialPort serialPort;
+    
+    public void jssctest() {
+    	serialPort = new SerialPort("COM1");
+        try {
+            //Открываем порт
+            serialPort.openPort();
+            //Выставляем параметры
+            serialPort.setParams(SerialPort.BAUDRATE_9600,
+                                 SerialPort.DATABITS_8,
+                                 SerialPort.STOPBITS_1,
+                                 SerialPort.PARITY_NONE);
+            //Включаем аппаратное управление потоком
+            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | 
+                                          SerialPort.FLOWCONTROL_RTSCTS_OUT);
+            //Устанавливаем ивент лисенер и маску
+            serialPort.addEventListener(new PortReader(), SerialPort.MASK_RXCHAR);
+            //Отправляем запрос устройству
+            serialPort.writeString("Get data");
+        }
+        catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
+    
+    public static class PortReader implements SerialPortEventListener {
 
+        public void serialEvent(SerialPortEvent event) {
+            if(event.isRXCHAR() &&event.getEventValue() > 0){
+                try {
+                    //Получаем ответ от устройства, обрабатываем данные и т.д.
+                    String data = serialPort.readString(event.getEventValue());
+                    //И снова отправляем запрос
+                    serialPort.writeString("Get data");
+                }
+                catch (Exception ex) {
+                    System.out.println(ex);
+                }
+            }
+        }
+    }
+    
+    
     public static void simplehttpserver() {
         int port = 58080;
         ServerSocket s = null;
