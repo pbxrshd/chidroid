@@ -144,3 +144,7 @@ JSSC:
  RXTX:
  http://playground.arduino.cc/interfacing/java
  http://www.jcontrol.org/download/readme_rxtx_en.html
+ 
+ websocket:
+ downloaded maven javax websocket (v1.1) from http://mvnrepository.com/artifact/javax.websocket/javax.websocket-api
+ http://blog.idrsolutions.com/2013/12/websockets-an-introduction/
